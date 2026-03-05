@@ -526,10 +526,10 @@ where
     }
 
     const CMAKE_LISTS_TXT: &str = "CMakeLists.txt";
-    fs::rename(
-        extracted_dir.join(CMAKE_LISTS_TXT),
-        cef_dir.join(CMAKE_LISTS_TXT),
-    )?;
+    let cmakelists = extracted_dir.join(CMAKE_LISTS_TXT);
+    if cmakelists.exists() {
+        fs::rename(cmakelists, cef_dir.join(CMAKE_LISTS_TXT))?;
+    }
     const CMAKE_DIR: &str = "cmake";
     fs::rename(extracted_dir.join(CMAKE_DIR), cef_dir.join(CMAKE_DIR))?;
     const INCLUDE_DIR: &str = "include";

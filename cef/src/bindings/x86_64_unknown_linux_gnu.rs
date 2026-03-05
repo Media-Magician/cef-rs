@@ -584,6 +584,7 @@ pub struct Settings {
     pub chrome_policy_id: CefString,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     pub disable_signal_handlers: ::std::os::raw::c_int,
+    pub use_views_default_popup: ::std::os::raw::c_int,
 }
 impl Settings {
     fn get_raw(&self) -> _cef_settings_t {
@@ -623,6 +624,7 @@ impl From<_cef_settings_t> for Settings {
             chrome_policy_id: value.chrome_policy_id.into(),
             chrome_app_icon_id: value.chrome_app_icon_id,
             disable_signal_handlers: value.disable_signal_handlers,
+            use_views_default_popup: value.use_views_default_popup,
         }
     }
 }
@@ -659,6 +661,7 @@ impl From<Settings> for _cef_settings_t {
             chrome_policy_id: value.chrome_policy_id.into(),
             chrome_app_icon_id: value.chrome_app_icon_id,
             disable_signal_handlers: value.disable_signal_handlers,
+            use_views_default_popup: value.use_views_default_popup,
         }
     }
 }
@@ -31185,6 +31188,92 @@ impl From<V8ArrayBufferReleaseCallback> for *mut _cef_v8_array_buffer_release_ca
     }
 }
 
+/// See [`_cef_v8_backing_store_t`] for more documentation.
+#[derive(Clone)]
+pub struct V8BackingStore(RefGuard<_cef_v8_backing_store_t>);
+pub trait ImplV8BackingStore: Clone + Sized + Rc {
+    #[doc = "See [`_cef_v8_backing_store_t::data`] for more documentation."]
+    fn data(&self) -> *mut ::std::os::raw::c_void;
+    #[doc = "See [`_cef_v8_backing_store_t::byte_length`] for more documentation."]
+    fn byte_length(&self) -> usize;
+    #[doc = "See [`_cef_v8_backing_store_t::is_valid`] for more documentation."]
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_raw(&self) -> *mut _cef_v8_backing_store_t;
+}
+impl ImplV8BackingStore for V8BackingStore {
+    fn data(&self) -> *mut ::std::os::raw::c_void {
+        unsafe {
+            self.0
+                .data
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn byte_length(&self) -> usize {
+        unsafe {
+            self.0
+                .byte_length
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn is_valid(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .is_valid
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_v8_backing_store_t {
+        unsafe { RefGuard::into_raw(&self.0) }
+    }
+}
+impl Rc for _cef_v8_backing_store_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for V8BackingStore {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_v8_backing_store_t> for &V8BackingStore {
+    fn into_raw(self) -> *mut _cef_v8_backing_store_t {
+        ImplV8BackingStore::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_v8_backing_store_t> for &mut V8BackingStore {
+    fn into_raw(self) -> *mut _cef_v8_backing_store_t {
+        ImplV8BackingStore::get_raw(self)
+    }
+}
+impl ConvertReturnValue<V8BackingStore> for *mut _cef_v8_backing_store_t {
+    fn wrap_result(self) -> V8BackingStore {
+        V8BackingStore(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl From<V8BackingStore> for *mut _cef_v8_backing_store_t {
+    fn from(value: V8BackingStore) -> Self {
+        let object = ImplV8BackingStore::get_raw(&value);
+        std::mem::forget(value);
+        object
+    }
+}
+
 /// See [`_cef_v8_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Value(RefGuard<_cef_v8_value_t>);
@@ -44882,9 +44971,9 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SITE_ENGAGEMENT`] for more documentation."]
     pub const SITE_ENGAGEMENT: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SITE_ENGAGEMENT);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DURABLE_STORAGE`] for more documentation."]
-    pub const DURABLE_STORAGE: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DURABLE_STORAGE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERSISTENT_STORAGE`] for more documentation."]
+    pub const PERSISTENT_STORAGE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERSISTENT_STORAGE);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_CHOOSER_DATA`] for more documentation."]
     pub const USB_CHOOSER_DATA: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_CHOOSER_DATA);
@@ -45072,10 +45161,8 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE`] for more documentation."]
     pub const ANTI_ABUSE: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING`] for more documentation."]
-    pub const THIRD_PARTY_STORAGE_PARTITIONING: Self = Self(
-        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING,
-    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING_DEPRECATED`] for more documentation."]
+    pub const THIRD_PARTY_STORAGE_PARTITIONING_DEPRECATED : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING_DEPRECATED) ;
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED`] for more documentation."]
     pub const HTTPS_ENFORCED: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED);
@@ -45140,9 +45227,9 @@ impl ContentSettingTypes {
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_POINTER_LOCK);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS`] for more documentation."]
     pub const REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS) ;
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION`] for more documentation."]
-    pub const TRACKING_PROTECTION: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION_DEPRECATED`] for more documentation."]
+    pub const TRACKING_PROTECTION_DEPRECATED: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION_DEPRECATED);
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO`] for more documentation."]
     pub const DISPLAY_MEDIA_SYSTEM_AUDIO: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO);
@@ -46205,8 +46292,6 @@ impl Errorcode {
     pub const PROXY_HTTP_1_1_REQUIRED: Self = Self(cef_errorcode_t::ERR_PROXY_HTTP_1_1_REQUIRED);
     #[doc = "See [`cef_errorcode_t::ERR_PAC_SCRIPT_TERMINATED`] for more documentation."]
     pub const PAC_SCRIPT_TERMINATED: Self = Self(cef_errorcode_t::ERR_PAC_SCRIPT_TERMINATED);
-    #[doc = "See [`cef_errorcode_t::ERR_PROXY_REQUIRED`] for more documentation."]
-    pub const PROXY_REQUIRED: Self = Self(cef_errorcode_t::ERR_PROXY_REQUIRED);
     #[doc = "See [`cef_errorcode_t::ERR_INVALID_HTTP_RESPONSE`] for more documentation."]
     pub const INVALID_HTTP_RESPONSE: Self = Self(cef_errorcode_t::ERR_INVALID_HTTP_RESPONSE);
     #[doc = "See [`cef_errorcode_t::ERR_CONTENT_DECODING_INIT_FAILED`] for more documentation."]
@@ -52798,6 +52883,19 @@ pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     }
 }
 
+/// See [`cef_v8_backing_store_create`] for more documentation.
+pub fn v8_backing_store_create(byte_length: usize) -> Option<V8BackingStore> {
+    unsafe {
+        let arg_byte_length = byte_length;
+        let result = cef_v8_backing_store_create(arg_byte_length);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
 /// See [`cef_v8_value_create_undefined`] for more documentation.
 pub fn v8_value_create_undefined() -> Option<V8Value> {
     unsafe {
@@ -52974,6 +53072,27 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
         let (arg_buffer, arg_length) = (buffer, length);
         let arg_buffer = arg_buffer.cast();
         let result = cef_v8_value_create_array_buffer_with_copy(arg_buffer, arg_length);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_v8_value_create_array_buffer_from_backing_store`] for more documentation.
+pub fn v8_value_create_array_buffer_from_backing_store(
+    backing_store: Option<&mut V8BackingStore>,
+) -> Option<V8Value> {
+    unsafe {
+        let arg_backing_store = backing_store;
+        let arg_backing_store = arg_backing_store
+            .map(|arg| {
+                arg.add_ref();
+                ImplV8BackingStore::get_raw(arg)
+            })
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_v8_value_create_array_buffer_from_backing_store(arg_backing_store);
         if result.is_null() {
             None
         } else {

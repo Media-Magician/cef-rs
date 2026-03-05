@@ -19,28 +19,29 @@ pub const CEF_API_VERSION_14200: i32 = 14200;
 pub const CEF_API_VERSION_14300: i32 = 14300;
 pub const CEF_API_VERSION_14400: i32 = 14400;
 pub const CEF_API_VERSION_14500: i32 = 14500;
+pub const CEF_API_VERSION_14600: i32 = 14600;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 14500;
+pub const CEF_API_VERSION_LAST: i32 = 14600;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 42] = b"145.0.27+g4ddda2e+chromium-145.0.7632.117\0";
-pub const CEF_VERSION_MAJOR: i32 = 145;
+pub const CEF_VERSION: &[u8; 51] = b"146.0.0-master.3496+g476a612+chromium-146.0.7680.0\0";
+pub const CEF_VERSION_MAJOR: i32 = 146;
 pub const CEF_VERSION_MINOR: i32 = 0;
-pub const CEF_VERSION_PATCH: i32 = 27;
-pub const CHROME_VERSION_MAJOR: i32 = 145;
+pub const CEF_VERSION_PATCH: i32 = 0;
+pub const CHROME_VERSION_MAJOR: i32 = 146;
 pub const CHROME_VERSION_MINOR: i32 = 0;
-pub const CHROME_VERSION_BUILD: i32 = 7632;
-pub const CHROME_VERSION_PATCH: i32 = 117;
+pub const CHROME_VERSION_BUILD: i32 = 7680;
+pub const CHROME_VERSION_PATCH: i32 = 0;
 pub type __uint16_t = ::std::os::raw::c_ushort;
 pub type __uint_least16_t = __uint16_t;
 pub type __pid_t = ::std::os::raw::c_int;
 pub type __time_t = ::std::os::raw::c_long;
 pub type pid_t = __pid_t;
 unsafe extern "C" {
-    #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
+    #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n 3 - CEF_SANDBOX_COMPAT_HASH (from cef_version.h, Windows only)\n"]
     pub fn cef_api_hash(
         version: ::std::os::raw::c_int,
         entry: ::std::os::raw::c_int,
@@ -568,21 +569,13 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_APP_BANNER = 16,
     #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_SITE_ENGAGEMENT = 17,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
-    CEF_CONTENT_SETTING_TYPE_DURABLE_STORAGE = 18,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
+    CEF_CONTENT_SETTING_TYPE_PERSISTENT_STORAGE = 18,
     CEF_CONTENT_SETTING_TYPE_USB_CHOOSER_DATA = 19,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_BLUETOOTH_GUARD = 20,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_BACKGROUND_SYNC = 21,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_AUTOPLAY = 22,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_IMPORTANT_SITE_INFO = 23,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOBLOCKER_DATA = 24,
-    #[doc = " Advanced device-specific functions on MIDI devices. MIDI-SysEx\n communications can be used for changing the MIDI device's persistent state\n such as firmware."]
     CEF_CONTENT_SETTING_TYPE_ADS = 25,
     #[doc = " Website setting which stores metadata for the subresource filter to aid in\n decisions for whether or not to show the UI."]
     CEF_CONTENT_SETTING_TYPE_ADS_DATA = 26,
@@ -699,8 +692,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION = 83,
     #[doc = " Content setting which is used to indicate whether anti-abuse functionality\n should be enabled."]
     CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE = 84,
-    #[doc = " Content setting used to indicate whether third-party storage partitioning\n should be enabled."]
-    CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING = 85,
+    CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING_DEPRECATED = 85,
     #[doc = " Used to indicate whether HTTPS-First Mode is enabled on the hostname."]
     CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED = 86,
     #[doc = " Setting for enabling the `getAllScreensMedia` API. Spec link:\n https://github.com/screen-share/capture-all-screens"]
@@ -742,8 +734,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_POINTER_LOCK = 106,
     #[doc = " Website setting which is used for RevokedPermissionsService to store\n auto-revoked notification permissions from abusive sites."]
     CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS = 107,
-    #[doc = " Content setting that controls tracking protection status per site.\n BLOCK: Protections enabled. This is the default state.\n ALLOW: Protections disabled."]
-    CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION = 108,
+    CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION_DEPRECATED = 108,
     #[doc = " With this permission, when the application calls `getDisplayMedia()`, a\n system audio track can be returned without showing the display media\n selection picker. The application can explicitly specify\n `systemAudio: 'exclude'` or `video: true` to still show the display media\n selection picker if needed. Please note that the setting only works for\n WebUI."]
     CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO = 109,
     #[doc = " Whether to use the higher-tier v8 optimizers for running JavaScript on the\n page."]
@@ -965,7 +956,7 @@ const _: () = {
 pub type cef_accelerated_paint_info_common_t = _cef_accelerated_paint_info_common_t;
 #[repr(u32)]
 #[non_exhaustive]
-#[doc = "\n CEF supports both a Chrome runtime style (based on the Chrome UI layer) and\n an Alloy runtime style (based on the Chromium content layer). Chrome style\n provides the full Chrome UI and browser functionality whereas Alloy style\n provides less default browser functionality but adds additional client\n callbacks and support for windowless (off-screen) rendering. The style type\n is individually configured for each window/browser at creation time and\n different styles can be mixed during runtime. For additional comparative\n details on runtime styles see\n https://bitbucket.org/chromiumembedded/cef/wiki/Architecture.md#markdown-header-cef3\n\n Windowless rendering will always use Alloy style. Windowed rendering with a\n default window or client-provided parent window can configure the style via\n CefWindowInfo.runtime_style. Windowed rendering with the Views framework can\n configure the style via CefWindowDelegate::GetWindowRuntimeStyle and\n CefBrowserViewDelegate::GetBrowserRuntimeStyle. Alloy style Windows with the\n Views framework can host only Alloy style BrowserViews but Chrome style\n Windows can host both style BrowserViews. Additionally, a Chrome style\n Window can host at most one Chrome style BrowserView but potentially\n multiple Alloy style BrowserViews. See CefWindowInfo.runtime_style\n documentation for any additional platform-specific limitations.\n"]
+#[doc = "\n CEF supports both a Chrome runtime style (based on the Chrome UI layer) and\n an Alloy runtime style (based on the Chromium content layer). Chrome style\n provides the full Chrome UI and browser functionality whereas Alloy style\n provides less default browser functionality but adds additional client\n callbacks and support for windowless (off-screen) rendering. The style type\n is individually configured for each window/browser at creation time and\n different styles can be mixed during runtime. For additional comparative\n details on runtime styles see\n https://chromiumembedded.github.io/cef/architecture#cef3\n\n Windowless rendering will always use Alloy style. Windowed rendering with a\n default window or client-provided parent window can configure the style via\n CefWindowInfo.runtime_style. Windowed rendering with the Views framework can\n configure the style via CefWindowDelegate::GetWindowRuntimeStyle and\n CefBrowserViewDelegate::GetBrowserRuntimeStyle. Alloy style Windows with the\n Views framework can host only Alloy style BrowserViews but Chrome style\n Windows can host both style BrowserViews. Additionally, a Chrome style\n Window can host at most one Chrome style BrowserView but potentially\n multiple Alloy style BrowserViews. See CefWindowInfo.runtime_style\n documentation for any additional platform-specific limitations.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_runtime_style_t {
     #[doc = "\n Use the default style. See above documentation for exceptions.\n"]
@@ -1247,10 +1238,12 @@ pub struct _cef_settings_t {
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     #[doc = "\n Specify whether signal handlers must be disabled on POSIX systems.\n"]
     pub disable_signal_handlers: ::std::os::raw::c_int,
+    #[doc = "\n If true use a Views (bare-bones) window instead of a Chrome UI window when\n creating default popups for Chrome style native-hosted (non-Views)\n browsers. This applies when CefLifeSpanHandler::OnBeforePopup has not been\n implemented to provide parent window information for the new popup.\n"]
+    pub use_views_default_popup: ::std::os::raw::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_settings_t"][::std::mem::size_of::<_cef_settings_t>() - 440usize];
+    ["Size of _cef_settings_t"][::std::mem::size_of::<_cef_settings_t>() - 448usize];
     ["Alignment of _cef_settings_t"][::std::mem::align_of::<_cef_settings_t>() - 8usize];
     ["Offset of field: _cef_settings_t::size"]
         [::std::mem::offset_of!(_cef_settings_t, size) - 0usize];
@@ -1312,6 +1305,8 @@ const _: () = {
         [::std::mem::offset_of!(_cef_settings_t, chrome_app_icon_id) - 432usize];
     ["Offset of field: _cef_settings_t::disable_signal_handlers"]
         [::std::mem::offset_of!(_cef_settings_t, disable_signal_handlers) - 436usize];
+    ["Offset of field: _cef_settings_t::use_views_default_popup"]
+        [::std::mem::offset_of!(_cef_settings_t, use_views_default_popup) - 440usize];
 };
 #[doc = "\n Initialization settings. Specify NULL or 0 to get the recommended default\n values. Many of these and other settings can also configured using command-\n line switches.\n"]
 pub type cef_settings_t = _cef_settings_t;
@@ -1853,7 +1848,6 @@ pub enum cef_errorcode_t {
     ERR_HTTP_1_1_REQUIRED = -365,
     ERR_PROXY_HTTP_1_1_REQUIRED = -366,
     ERR_PAC_SCRIPT_TERMINATED = -367,
-    ERR_PROXY_REQUIRED = -368,
     ERR_INVALID_HTTP_RESPONSE = -370,
     ERR_CONTENT_DECODING_INIT_FAILED = -371,
     ERR_HTTP2_RST_STREAM_NO_ERROR_RECEIVED = -372,
@@ -8609,7 +8603,7 @@ pub struct _cef_browser_host_t {
     pub was_hidden: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_browser_host_t, hidden: ::std::os::raw::c_int),
     >,
-    #[doc = "\n Notify the browser that screen information has changed. Updated\n information will be sent to the renderer process to configure screen size\n and position values used by CSS and JavaScript (window.deviceScaleFactor,\n window.screenX/Y, window.outerWidth/Height, etc.). For background see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage.md#markdown-\n header-coordinate-systems\n\n This function is used with (a) windowless rendering and (b) windowed\n rendering with external (client-provided) root window.\n\n With windowless rendering the browser will call\n cef_render_handler_t::GetScreenInfo,\n cef_render_handler_t::GetRootScreenRect and\n cef_render_handler_t::GetViewRect. This simulates moving or resizing the\n root window in the current display, moving the root window from one\n display to another, or changing the properties of the current display.\n\n With windowed rendering the browser will call\n cef_display_handler_t::GetRootWindowScreenRect and use the associated\n display properties.\n"]
+    #[doc = "\n Notify the browser that screen information has changed. Updated\n information will be sent to the renderer process to configure screen size\n and position values used by CSS and JavaScript (window.deviceScaleFactor,\n window.screenX/Y, window.outerWidth/Height, etc.). For background see\n https://chromiumembedded.github.io/cef/general_usage#coordinate-systems\n\n This function is used with (a) windowless rendering and (b) windowed\n rendering with external (client-provided) root window.\n\n With windowless rendering the browser will call\n cef_render_handler_t::GetScreenInfo,\n cef_render_handler_t::GetRootScreenRect and\n cef_render_handler_t::GetViewRect. This simulates moving or resizing the\n root window in the current display, moving the root window from one\n display to another, or changing the properties of the current display.\n\n With windowed rendering the browser will call\n cef_display_handler_t::GetRootWindowScreenRect and use the associated\n display properties.\n"]
     pub notify_screen_info_changed:
         ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_browser_host_t)>,
     #[doc = "\n Invalidate the view. The browser will call cef_render_handler_t::OnPaint\n asynchronously. This function is only used when window rendering is\n disabled.\n"]
@@ -10806,7 +10800,7 @@ pub type cef_keyboard_handler_t = _cef_keyboard_handler_t;
 pub struct _cef_life_span_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called on the UI thread before a new popup browser is created. The\n |browser| and |frame| values represent the source of the popup request\n (opener browser and frame). The |popup_id| value uniquely identifies the\n popup in the context of the opener browser. The |target_url| and\n |target_frame_name| values indicate where the popup browser should\n navigate and may be NULL if not specified with the request. The\n |target_disposition| value indicates where the user intended to open the\n popup (e.g. current tab, new tab, etc). The |user_gesture| value will be\n true (1) if the popup was opened via explicit user gesture (e.g. clicking\n a link) or false (0) if the popup opened automatically (e.g. via the\n DomContentLoaded event). The |popupFeatures| structure contains additional\n information about the requested popup window. To allow creation of the\n popup browser optionally modify |windowInfo|, |client|, |settings| and\n |no_javascript_access| and return false (0). To cancel creation of the\n popup browser return true (1). The |client| and |settings| values will\n default to the source browser's values. If the |no_javascript_access|\n value is set to false (0) the new browser will not be scriptable and may\n not be hosted in the same renderer process as the source browser. Any\n modifications to |windowInfo| will be ignored if the parent browser is\n wrapped in a cef_browser_view_t. The |extra_info| parameter provides an\n opportunity to specify extra information specific to the created popup\n browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n\n If popup browser creation succeeds then OnAfterCreated will be called for\n the new popup browser. If popup browser creation fails, and if the opener\n browser has not yet been destroyed, then OnBeforePopupAborted will be\n called for the opener browser. See OnBeforePopupAborted documentation for\n additional details.\n"]
+    #[doc = "\n Called on the UI thread before a new popup browser is created. The\n |browser| and |frame| values represent the source of the popup request\n (opener browser and frame). The |popup_id| value uniquely identifies the\n popup in the context of the opener browser. The |target_url| and\n |target_frame_name| values indicate where the popup browser should\n navigate and may be NULL if not specified with the request. The\n |target_disposition| value indicates where the user intended to open the\n popup (e.g. current tab, new tab, etc). The |user_gesture| value will be\n true (1) if the popup was opened via explicit user gesture (e.g. clicking\n a link) or false (0) if the popup opened automatically (e.g. via the\n DomContentLoaded event). The |popupFeatures| structure contains additional\n information about the requested popup window. To allow creation of the\n popup browser optionally modify |windowInfo|, |client|, |settings| and\n |no_javascript_access| and return false (0). To cancel creation of the\n popup browser return true (1). The |client| and |settings| values will\n default to the source browser's values. If the |no_javascript_access|\n value is set to false (0) the new browser will not be scriptable and may\n not be hosted in the same renderer process as the source browser. Any\n modifications to |windowInfo| will be ignored if the parent browser is\n wrapped in a cef_browser_view_t. The |extra_info| parameter provides an\n opportunity to specify extra information specific to the created popup\n browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n\n If popup browser creation succeeds then OnAfterCreated will be called for\n the new popup browser. If popup browser creation fails, and if the opener\n browser has not yet been destroyed, then OnBeforePopupAborted will be\n called for the opener browser. See OnBeforePopupAborted documentation for\n additional details.\n\n A default popup window is created if this function returns false (0)\n without setting a parent window handle via cef_window_tInfo (for native-\n hosted popups), or without implementing\n cef_browser_view_delegate_t::OnPopupBrowserViewCreated (for Views-hosted\n popups). The default popup window type depends on the parent browser\n configuration:\n - Views-hosted parent: Creates a Views-hosted popup window.\n - Native-hosted Alloy style parent: Creates a native popup window.\n - Native-hosted Chrome style parent: Creates a Chrome UI popup window by\n   default; set CefSettings.use_views_default_popup to true (1) to instead\n   create a Views-hosted popup window.\n"]
     pub on_before_popup: ::std::option::Option<
         unsafe extern "C" fn(
             self_: *mut _cef_life_span_handler_t,
@@ -13145,6 +13139,44 @@ const _: () = {
 };
 #[doc = "\n Callback structure that is passed to cef_v8_value_t::CreateArrayBuffer.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_v8_array_buffer_release_callback_t = _cef_v8_array_buffer_release_callback_t;
+#[doc = "\n Structure representing a V8 ArrayBuffer backing store. The backing store\n holds the memory that backs an ArrayBuffer. It must be created on a thread\n with a valid V8 isolate (renderer main thread or WebWorker thread). Once\n created, the data() pointer can be safely read/written from any thread. This\n allows expensive operations like memcpy to be performed on a background\n thread before creating the ArrayBuffer on the V8 thread.\n\n The backing store is consumed when passed to\n cef_v8_value_t::cef_v8_value_create_array_buffer_from_backing_store(), after\n which is_valid() returns false (0).\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_v8_backing_store_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns a pointer to the allocated memory, or nullptr if the backing store\n has been consumed or is otherwise invalid. The pointer is safe to\n read/write from any thread. The caller must ensure all writes are complete\n before passing this object to\n cef_v8_value_create_array_buffer_from_backing_store(). Pointers obtained\n from this function should not be retained after calling\n cef_v8_value_create_array_buffer_from_backing_store(), as the memory will\n then be owned by the ArrayBuffer and subject to V8 garbage collection.\n"]
+    pub data: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_v8_backing_store_t) -> *mut ::std::os::raw::c_void,
+    >,
+    #[doc = "\n Returns the size of the allocated memory in bytes, or 0 if the backing\n store has been consumed.\n"]
+    pub byte_length:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_v8_backing_store_t) -> usize>,
+    #[doc = "\n Returns true (1) if this backing store has not yet been consumed by\n cef_v8_value_create_array_buffer_from_backing_store().\n"]
+    pub is_valid: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_v8_backing_store_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_v8_backing_store_t"][::std::mem::size_of::<_cef_v8_backing_store_t>() - 64usize];
+    ["Alignment of _cef_v8_backing_store_t"]
+        [::std::mem::align_of::<_cef_v8_backing_store_t>() - 8usize];
+    ["Offset of field: _cef_v8_backing_store_t::base"]
+        [::std::mem::offset_of!(_cef_v8_backing_store_t, base) - 0usize];
+    ["Offset of field: _cef_v8_backing_store_t::data"]
+        [::std::mem::offset_of!(_cef_v8_backing_store_t, data) - 40usize];
+    ["Offset of field: _cef_v8_backing_store_t::byte_length"]
+        [::std::mem::offset_of!(_cef_v8_backing_store_t, byte_length) - 48usize];
+    ["Offset of field: _cef_v8_backing_store_t::is_valid"]
+        [::std::mem::offset_of!(_cef_v8_backing_store_t, is_valid) - 56usize];
+};
+#[doc = "\n Structure representing a V8 ArrayBuffer backing store. The backing store\n holds the memory that backs an ArrayBuffer. It must be created on a thread\n with a valid V8 isolate (renderer main thread or WebWorker thread). Once\n created, the data() pointer can be safely read/written from any thread. This\n allows expensive operations like memcpy to be performed on a background\n thread before creating the ArrayBuffer on the V8 thread.\n\n The backing store is consumed when passed to\n cef_v8_value_t::cef_v8_value_create_array_buffer_from_backing_store(), after\n which is_valid() returns false (0).\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_v8_backing_store_t = _cef_v8_backing_store_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new backing store with allocated memory of |byte_length| bytes. The\n memory is uninitialized. This function must be called on a thread with a\n valid V8 isolate. The returned object can safely be passed to other threads.\n Returns nullptr on failure.\n"]
+    pub fn cef_v8_backing_store_create(byte_length: usize) -> *mut cef_v8_backing_store_t;
+}
 #[doc = "\n Structure representing a V8 value handle. V8 handles can only be accessed\n from the thread on which they are created. Valid threads for creating a V8\n handle include the render process main thread (TID_RENDERER) and WebWorker\n threads. A task runner for posting tasks on the associated thread can be\n retrieved via the cef_v8_context_t::get_task_runner() function.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -13589,6 +13621,12 @@ unsafe extern "C" {
     pub fn cef_v8_value_create_array_buffer_with_copy(
         buffer: *mut ::std::os::raw::c_void,
         length: usize,
+    ) -> *mut cef_v8_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Create a new cef_v8_value_t object of type ArrayBuffer from a backing store\n previously created with cef_v8_backing_store_t::cef_translator_test_scoped_l\n ibrary_child_child_create(). This is a zero-copy operation — the ArrayBuffer\n uses the memory already allocated by the backing store. The backing store is\n consumed and becomes invalid after this call. This function should only be\n called from within the scope of a cef_render_process_handler_t,\n cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with\n calling enter() and exit() on a stored cef_v8_context_t reference.\n"]
+    pub fn cef_v8_value_create_array_buffer_from_backing_store(
+        backing_store: *mut cef_v8_backing_store_t,
     ) -> *mut cef_v8_value_t;
 }
 unsafe extern "C" {
@@ -16002,7 +16040,7 @@ const _: () = {
 };
 #[doc = "\n Implement this structure to handle Button events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_button_delegate_t = _cef_button_delegate_t;
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://chromiumembedded.github.io/cef/general_usage#coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _cef_display_t {
@@ -16053,7 +16091,7 @@ const _: () = {
     ["Offset of field: _cef_display_t::get_rotation"]
         [::std::mem::offset_of!(_cef_display_t, get_rotation) - 88usize];
 };
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://chromiumembedded.github.io/cef/general_usage#coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_display_t = _cef_display_t;
 unsafe extern "C" {
     #[doc = "\n Returns the primary Display.\n"]

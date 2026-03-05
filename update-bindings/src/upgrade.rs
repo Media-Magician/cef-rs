@@ -65,6 +65,9 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
         .bitfield_enum("cef_v8_propertyattribute_t")
         .clang_args([
             format!("-I{}", cef_path.display()),
+            format!("-I{}", cef_path.parent().unwrap().display()), // chromium/src
+            format!("-I{}/out/Release_GN_x64", cef_path.parent().unwrap().display()),
+            format!("-I{}/out/Release_GN_x64/gen", cef_path.parent().unwrap().display()),
             format!("--target={target}"),
         ]);
 
